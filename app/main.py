@@ -1,7 +1,11 @@
 from fastapi import FastAPI, UploadFile, File
 import os
-from app.utils.file_reader import read_txt
-from app.core.ollama_client import summarize
+from utils.file_reader import read_txt
+from core.ollama_client import summarize
+from db.base import Base
+# from db.session import engine
+# from models.document import Document
+
 
 app = FastAPI()
 
@@ -50,3 +54,5 @@ async def summarize_file(filename: str):
     return {
         "summary": result
     }
+
+
