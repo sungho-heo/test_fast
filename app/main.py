@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
 import os
-from utils.file_reader import read_txt
+from parsers.parser_manager import read_file
 from core.ollama_client import summarize
 from db.base import Base
 # from db.session import engine
@@ -28,30 +28,44 @@ UPLOAD_DIR = "storage/uploads"
 # created_at Date 문서 요약일
 
 # 추가할에정인거 문서가 업로드되는 개당 root/file/upload/문서_id값
-@app.post("/upload")
-async def upload(file: UploadFile= File(...)):
-    os.makedirs(UPLOAD_DIR, exist_ok=True)
+# @app.post("/upload")
+# async def upload(file: UploadFile= File(...)):
+#     os.makedirs(UPLOAD_DIR, exist_ok=True)
     
-    file_path = os.path.join(UPLOAD_DIR, file.filename)
+#     file_path = os.path.join(UPLOAD_DIR, file.filename)
 
-# wb 바이너리 파일 읽기 pdf,한글, 워드문서.
-    with open(file_path, "wb") as f:
-        f.write(await file.read())
+# # wb 바이너리 파일 읽기 pdf,한글, 워드문서.
+#     with open(file_path, "wb") as f:
+#         f.write(await file.read())
     
-    return {
-        "filename": file.filename,
-        "stored_path": file_path
-    }
+#     return {
+#         "filename": file.filename,
+#         "stored_path": file_path
+#     }
 # #POST 처리할 문서 받기
 @app.post("/summarize")
 # 업로드할 파일
-async def summarize_file(filename: str):
-    path= f"storage/uploads/{filename}"
+async def summarize_file(file:UploadFile=File(...)):
     
-    text = read_txt(path)
+    # 1.저장
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    
+    file_path = os.path.join(
+        UPLOAD_DIR,
+        file.filename
+    )
+    
+    with open(file_path, "wb") as f:
+        f.write(await file.read())
+        
+    #2. 텍스트 추출
+    text = read_file(file_path)
+    
+    #3. ollama 요약
     result = summarize(text)
     
     return {
+        "filename": file.filename,
         "summary": result
     }
 
