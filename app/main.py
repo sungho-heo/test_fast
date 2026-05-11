@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File
 import os
 from app.utils.file_reader import read_txt
+from app.core.ollama_client import summarize
 
 app = FastAPI()
 
@@ -35,13 +36,17 @@ async def upload(file: UploadFile= File(...)):
     
     return {
         "filename": file.filename,
-        "path": file_path
+        "stored_path": file_path
     }
 # #POST 처리할 문서 받기
-# @app.post("/summarize")
-# # 업로드할 파일
-# async def summarize_document(file: UploadFile = File(...)):
-#     # 파일 읽기
-#     content = await file.read()
-#     # 텍스트 추출 + AI 처리 로직 연결하기
-#     return {"filename": file.filename, "summary": result}
+@app.post("/summarize")
+# 업로드할 파일
+async def summarize_file(filename: str):
+    path= f"storage/uploads/{filename}"
+    
+    text = read_txt(path)
+    result = summarize(text)
+    
+    return {
+        "summary": result
+    }
