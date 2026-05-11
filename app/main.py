@@ -1,8 +1,8 @@
 from fastapi import FastAPI, UploadFile, File
 import os
-from parsers.parser_manager import read_file
-from core.ollama_client import summarize
-from db.base import Base
+from app.parsers.parser_manager import read_file
+from app.core.ollama_client import summarize
+from app.db.base import Base
 # from db.session import engine
 # from models.document import Document
 
@@ -61,6 +61,7 @@ async def summarize_file(file:UploadFile=File(...)):
     #2. 텍스트 추출
     text = read_file(file_path)
     
+    print("TEXT:", text)
     #3. ollama 요약
     result = summarize(text)
     
@@ -68,5 +69,3 @@ async def summarize_file(file:UploadFile=File(...)):
         "filename": file.filename,
         "summary": result
     }
-
-
