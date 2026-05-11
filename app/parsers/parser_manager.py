@@ -1,15 +1,17 @@
 import os
-from app.parsers.txt_parser import read_txt
+from app.parsers.markitdown_parser import read_markitdown
 from app.parsers.pdf_parser import read_pdf
+from app.parsers.docx_parser import read_docx
 
 def read_file(path:str):
     
     ext = os.path.splitext(path)[1].lower()
-    
-    if ext == ".txt":
-        return read_txt(path)
 
     if ext == ".pdf":
         return read_pdf(path)
     
-    return ValueError("지원하지 않는 파일 형식입니다.")
+    if ext == ".docx":
+        return read_docx(path)
+    
+    # 나머지 확장자는 다 이걸로
+    return read_markitdown(path)
