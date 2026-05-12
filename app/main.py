@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 import os
 from app.parsers.parser_manager import read_file
 from app.core.ollama_client import summarize
+from app.processors.chunk import fixed_chunk,recursive_chunk,semantic_chunk
 from app.db.base import Base
 # from db.session import engine
 # from models.document import Document
@@ -34,14 +35,6 @@ UPLOAD_DIR = "storage/uploads"
     
 #     file_path = os.path.join(UPLOAD_DIR, file.filename)
 
-# # wb 바이너리 파일 읽기 pdf,한글, 워드문서.
-#     with open(file_path, "wb") as f:
-#         f.write(await file.read())
-    
-#     return {
-#         "filename": file.filename,
-#         "stored_path": file_path
-#     }
 # #POST 처리할 문서 받기
 @app.post("/summarize")
 # 업로드할 파일
@@ -62,8 +55,12 @@ async def summarize_file(file:UploadFile=File(...)):
     text = read_file(file_path)
     
     print("TEXT:", text)
-    #3. ollama 요약
-    result = summarize(text)
+    
+    #3. 청크
+    chunk_text = semantic_chunk(text)
+    
+    #4. ollama 요약
+    result = summarize(chunk_text)
     
     return {
         "filename": file.filename,
