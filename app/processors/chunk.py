@@ -2,14 +2,14 @@
 from ollama import Client
 import numpy as np
 
-def fixed_chunk(text:str, chunk_size:int=500, overlap:int =50):
-    chunks = []
-    start =0
-    while start < len(text):
-        end = start + chunk_size
-        chunks.append(text[start:end])
-        start += chunk_size - overlap
-    return chunks
+# def fixed_chunk(text:str, chunk_size:int=500, overlap:int =50):
+#     chunks = []
+#     start =0
+#     while start < len(text):
+#         end = start + chunk_size
+#         chunks.append(text[start:end])
+#         start += chunk_size - overlap
+#     return chunks
 
 
 def recursive_chunk(text:str, chunk_size:int =500, overlap:int =50):
@@ -36,32 +36,32 @@ def recursive_chunk(text:str, chunk_size:int =500, overlap:int =50):
     
     return [text]
 
-ollama = Client()
+# ollama = Client()
 
-def cosine_similarity(a,b):
-    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+# def cosine_similarity(a,b):
+#     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
-def semantic_chunk(text:str, threshold: float = 0.8):
-    sentences = text.split(". ")
+# def semantic_chunk(text:str, threshold: float = 0.8):
+#     sentences = text.split(". ")
     
-    # 각 문장 임베딩
-    embeddings = []
-    for s in sentences:
-        res = ollama.embeddings(model="nomic-embed-text", prompt=s)
-        embeddings.append(res["embedding"])
+#     # 각 문장 임베딩
+#     embeddings = []
+#     for s in sentences:
+#         res = ollama.embeddings(model="nomic-embed-text", prompt=s)
+#         embeddings.append(res["embedding"])
         
-    chunks = []
-    current_chunk = [sentences[0]]
+#     chunks = []
+#     current_chunk = [sentences[0]]
     
-    for i in range(1, len(sentences)):
-        # 유사도를 코사인 유사도 계산으로 구함.
-        similarity = cosine_similarity(embeddings[i-1], embeddings[i])
+#     for i in range(1, len(sentences)):
+#         # 유사도를 코사인 유사도 계산으로 구함.
+#         similarity = cosine_similarity(embeddings[i-1], embeddings[i])
         
-        if similarity >= threshold:
-            current_chunk.append(sentences[1]) #유사하면 같은 청크로인식.
-        else:
-            chunks.append(". ".join(current_chunk)) # 다를경우 새 청크로만듬.
-            current_chunk = [sentences[1]]
+#         if similarity >= threshold:
+#             current_chunk.append(sentences[1]) #유사하면 같은 청크로인식.
+#         else:
+#             chunks.append(". ".join(current_chunk)) # 다를경우 새 청크로만듬.
+#             current_chunk = [sentences[1]]
     
-    chunks.append(". ".join(current_chunk))
-    return chunks
+#     chunks.append(". ".join(current_chunk))
+#     return chunks

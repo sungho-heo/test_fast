@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 import os
 from app.parsers.parser_manager import read_file
 from app.core.ollama_client import summarize
-from app.processors.chunk import fixed_chunk,recursive_chunk,semantic_chunk
+from app.processors.chunk import recursive_chunk
 from app.db.base import Base
 # from db.session import engine
 # from models.document import Document
@@ -57,7 +57,7 @@ async def summarize_file(file:UploadFile=File(...)):
     print("TEXT:", text)
     
     #3. 청크
-    chunk_text = semantic_chunk(text)
+    chunk_text = recursive_chunk(text)
     
     #4. ollama 요약
     result = summarize(chunk_text)
