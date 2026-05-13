@@ -1,7 +1,7 @@
 import os
 from app.parsers.markitdown_parser import read_markitdown
-from pdf_parser import read_pdf
-from docx_parser import read_docx
+from app.parsers.pdf_parser import read_pdf
+from app.parsers.docx_parser import read_docx
 
 def read_file(path:str):
     

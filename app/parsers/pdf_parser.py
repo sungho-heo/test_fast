@@ -2,7 +2,9 @@ import fitz
 from PIL import Image
 import pytesseract
 import io
+import os
 
+pytesseract.pytesseract.tesseract_cmd = os.getenv("TESSERACT_PATH")
 # Pdf file read
 def read_pdf(path:str):
     
